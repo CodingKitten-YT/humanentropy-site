@@ -22,22 +22,6 @@ export const authOptions = {
       return token
     },
   },
-  pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error', // Add error page
-  },
-  // Fix for localhost development
-  cookies: {
-    sessionToken: {
-      name: `__Secure-next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
 }
 
 const handler = NextAuth(authOptions)
