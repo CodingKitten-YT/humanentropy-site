@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'DotGrid - Interactive Pattern Creator',
+  title: 'HumanEntropy - Interactive Pattern Creator',
   description: 'Create patterns on a 32×32 grid and share them with the community',
 }
 

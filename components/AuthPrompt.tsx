@@ -13,7 +13,7 @@ export default function AuthPrompt() {
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
             <MousePointer className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl">Welcome to DotGrid</CardTitle>
+          <CardTitle className="text-2xl">Welcome to HumanEntropy</CardTitle>
           <CardDescription className="text-center">
             Sign in with GitHub to start creating patterns on the 32×32 grid
             <br />
