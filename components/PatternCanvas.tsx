@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,6 +23,19 @@ export default function PatternCanvas() {
   const [coordinates, setCoordinates] = useState<Coordinate[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [optedInForCredit, setOptedInForCredit] = useState(true)
+
+  // Load credit preference from localStorage on component mount
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('creditPreference')
+    if (savedPreference !== null) {
+      setOptedInForCredit(JSON.parse(savedPreference))
+    }
+  }, [])
+
+  // Save credit preference to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('creditPreference', JSON.stringify(optedInForCredit))
+  }, [optedInForCredit])
 
   const toggleDot = useCallback((x: number, y: number) => {
     if (!session) return
