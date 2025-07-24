@@ -1,7 +1,8 @@
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
+import type { NextAuthOptions } from "next-auth"
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     GitHub({
       clientId: process.env.GITHUB_ID!,
@@ -21,6 +22,38 @@ export const authOptions = {
       }
       return token
     },
+    async redirect({ url, baseUrl }) {
+      console.log('NextAuth redirect called with:', { url, baseUrl })
+      
+      // Handle signout - always go to homepage
+      if (url.includes('signout') || url.includes('/api/auth/signout')) {
+        console.log('Redirecting after signout to:', baseUrl)
+        return baseUrl
+      }
+      
+      // Handle signin callback - go to app page on first login
+      if (url.includes('callback') && url.includes('github')) {
+        console.log('Redirecting after GitHub login to: /app')
+        return `${baseUrl}/app`
+      }
+      
+      // Allow relative callback URLs
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`
+      }
+      
+      // Allow same origin URLs
+      if (new URL(url).origin === baseUrl) {
+        return url
+      }
+      
+      return baseUrl
+    },
+  },
+  pages: {
+    signIn: '/',     // Redirect to homepage for sign-in
+    error: '/',      // Redirect to homepage on error  
+    signOut: '/',    // Redirect to homepage after sign-out
   },
 }
 

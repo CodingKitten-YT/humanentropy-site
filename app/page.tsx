@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSession, signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -28,6 +30,8 @@ const generateRandomPattern = () => {
 
 export default function HomePage() {
   const [currentPattern, setCurrentPattern] = useState<number[]>([])
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
   useEffect(() => {
     // Initialize with first pattern
@@ -41,6 +45,16 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [])
 
+  // Auto-redirect handled by NextAuth configuration on first login
+
+  const handleContribute = () => {
+    if (session) {
+      router.push('/app')
+    } else {
+      signIn('github')
+    }
+  }
+
   return (
     <>
       {/* Header */}
@@ -52,12 +66,37 @@ export default function HomePage() {
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              <Link href="/login">
-                <Button size="sm" className="flex items-center space-x-2">
-                  <span>Contribute Now</span>
+              {session ? (
+                <Button 
+                  size="sm" 
+                  className="flex items-center space-x-2"
+                  onClick={() => router.push('/app')}
+                >
+                  <Brain className="w-4 h-4" />
+                  <span>Create Pattern</span>
                   <ArrowRight className="w-4 h-4" />
                 </Button>
-              </Link>
+              ) : (
+                <Button 
+                  size="sm" 
+                  className="flex items-center space-x-2"
+                  onClick={handleContribute}
+                  disabled={status === 'loading'}
+                >
+                  {status === 'loading' ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Loading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Github className="w-4 h-4" />
+                      <span>Contribute Now</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -86,13 +125,25 @@ export default function HomePage() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link href="/login">
-                <Button size="lg" className="flex items-center space-x-2 text-lg px-8 py-3">
-                  <Github className="w-5 h-5" />
-                  <span>Contribute Now</span>
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="flex items-center space-x-2 text-lg px-8 py-3"
+                onClick={handleContribute}
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <Github className="w-5 h-5" />
+                    <span>Contribute Now</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
+              </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-3" asChild>
                 <a href="#about">What's This About?</a>
               </Button>
@@ -214,13 +265,25 @@ export default function HomePage() {
               Add a few dots to science. You'll be contributing to a real dataset, 
               and maybe even help an ML model figure out what makes people human.
             </p>
-            <Link href="/login">
-              <Button size="lg" className="text-xl px-12 py-4">
-                <Github className="w-6 h-6 mr-3" />
-                Let's Go
-                <ArrowRight className="w-6 h-6 ml-3" />
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="text-xl px-12 py-4"
+              onClick={handleContribute}
+              disabled={status === 'loading'}
+            >
+              {status === 'loading' ? (
+                <>
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <Github className="w-6 h-6 mr-3" />
+                  Let's Go
+                  <ArrowRight className="w-6 h-6 ml-3" />
+                </>
+              )}
+            </Button>
           </div>
         </section>
       </main>

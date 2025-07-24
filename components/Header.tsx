@@ -14,8 +14,10 @@ export default function Header() {
   const pathname = usePathname()
 
   const handleSignOut = async () => {
-    await signOut({ redirect: false })
-    router.push('/')
+    // Use NextAuth signOut with explicit redirect to homepage
+    await signOut({ 
+      callbackUrl: window.location.origin
+    })
   }
 
   return (
@@ -73,16 +75,15 @@ export default function Header() {
                 </Button>
               </div>
             ) : (
-              <Link href="/login">
-                <Button
-                  size="sm"
-                  className="flex items-center space-x-1 sm:space-x-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 dark:text-gray-900 text-xs sm:text-sm px-2 sm:px-3"
-                >
-                  <Github className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden xs:inline">Sign in</span>
-                  <span className="hidden sm:inline">with GitHub</span>
-                </Button>
-              </Link>
+              <Button
+                onClick={() => signIn('github')}
+                size="sm"
+                className="flex items-center space-x-1 sm:space-x-2 bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:hover:bg-gray-200 dark:text-gray-900 text-xs sm:text-sm px-2 sm:px-3"
+              >
+                <Github className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Sign in</span>
+                <span className="hidden sm:inline">with GitHub</span>
+              </Button>
             )}
           </div>
         </div>

@@ -8,6 +8,9 @@ import {
   closeDatabase 
 } from '@/lib/database'
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+
 // Admin users - in production, use environment variables or database
 const ADMIN_USERS = ['CodingKitten-YT'] // Add your GitHub username
 

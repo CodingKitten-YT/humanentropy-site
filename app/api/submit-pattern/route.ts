@@ -8,6 +8,9 @@ import {
   closeDatabase 
 } from '@/lib/database'
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+
 // Simple in-memory rate limiting (in production, use Redis or similar)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute
