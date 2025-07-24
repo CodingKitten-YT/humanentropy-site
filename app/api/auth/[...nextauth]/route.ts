@@ -51,9 +51,9 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: '/',     // Redirect to homepage for sign-in
-    error: '/',      // Redirect to homepage on error  
-    signOut: '/',    // Redirect to homepage after sign-out
+    signIn: '/login',  // Redirect to login page for sign-in
+    error: '/login',   // Redirect to login page on error  
+    signOut: '/',      // Redirect to homepage after sign-out
   },
 }
 
