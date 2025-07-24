@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google'
 import AuthProvider from '@/components/AuthProvider'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { Toaster } from '@/components/ui/sonner'
-import SEOHead from '@/components/SEOHead'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -82,9 +81,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <SEOHead />
-      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
