@@ -1,0 +1,66 @@
+{
+  "name": "HumanEntropy - AI Training Through Human Patterns",
+  "short_name": "HumanEntropy",
+  "description": "Join an open research project studying human randomness. Create dot patterns to help train machine learning models that understand human behavior patterns.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["education", "research", "productivity"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "1280x720",
+      "form_factor": "wide",
+      "label": "HumanEntropy Pattern Creator Interface"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Pattern",
+      "short_name": "Create",
+      "description": "Start creating a new dot pattern",
+      "url": "/app",
+      "icons": [
+        {
+          "src": "/logo.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "View Leaderboard",
+      "short_name": "Leaderboard",
+      "description": "Check community contributions",
+      "url": "/app",
+      "icons": [
+        {
+          "src": "/logo.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

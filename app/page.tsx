@@ -57,6 +57,49 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Schema markup for research project */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ResearchProject",
+            "name": "HumanEntropy",
+            "description": "An open research project studying how humans create patterns and randomness, using the data to train machine learning models.",
+            "url": "https://didactic-space-sniffle-9v55vxpq765fp646-3000.app.github.dev",
+            "sponsor": {
+              "@type": "Person",
+              "name": "15-year-old developer and researcher"
+            },
+            "researcher": {
+              "@type": "Person", 
+              "name": "HumanEntropy Research Team"
+            },
+            "funding": {
+              "@type": "Grant",
+              "funder": {
+                "@type": "Organization",
+                "name": "Open Source Community"
+              }
+            },
+            "about": [
+              {
+                "@type": "Thing",
+                "name": "Human Randomness"
+              },
+              {
+                "@type": "Thing", 
+                "name": "Machine Learning"
+              },
+              {
+                "@type": "Thing",
+                "name": "Pattern Recognition"
+              }
+            ]
+          })
+        }}
+      />
+      
       {/* Header */}
       <header className="border-b bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-3">

@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /app
+Allow: /login
+Allow: /api/leaderboard
+
+# Block admin and auth endpoints
+Disallow: /api/admin/
+Disallow: /api/auth/
+Disallow: /api/submit-pattern
+
+# Sitemap
+Sitemap: https://didactic-space-sniffle-9v55vxpq765fp646-3000.app.github.dev/sitemap.xml
+
+# Crawl-delay to be respectful
+Crawl-delay: 1
