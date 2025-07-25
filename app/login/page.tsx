@@ -17,7 +17,10 @@ export default function LoginPage() {
   }, [session, router])
 
   const handleGitHubSignIn = () => {
-    signIn('github', { callbackUrl: '/app' })
+    signIn('github', { 
+      callbackUrl: '/app',
+      redirect: true 
+    })
   }
 
   if (status === 'loading') {

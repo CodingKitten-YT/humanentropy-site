@@ -22,39 +22,9 @@ export const authOptions: NextAuthOptions = {
       }
       return token
     },
-    async redirect({ url, baseUrl }) {
-      // Handle signout - always go to homepage
-      if (url.includes('signout') || url.includes('/api/auth/signout')) {
-        return baseUrl
-      }
-      
-      // Handle signin callback - go to app page on first login
-      if (url.includes('callback') && url.includes('github')) {
-        return `${baseUrl}/app`
-      }
-      
-      // If someone is trying to go to /app after login, let them
-      if (url === `${baseUrl}/app` || url === '/app') {
-        return `${baseUrl}/app`
-      }
-      
-      // Allow relative callback URLs
-      if (url.startsWith('/')) {
-        return `${baseUrl}${url}`
-      }
-      
-      // Allow same origin URLs
-      if (new URL(url).origin === baseUrl) {
-        return url
-      }
-      
-      return baseUrl
-    },
   },
   pages: {
-    signIn: '/login',  // Redirect to login page for sign-in
-    error: '/login',   // Redirect to login page on error  
-    signOut: '/',      // Redirect to homepage after sign-out
+    signIn: '/login',
   },
 }
 

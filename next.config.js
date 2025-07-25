@@ -6,11 +6,6 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   
-  // Disable static optimization for auth-protected pages
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
-  
   // Security headers for better SEO ranking
   async headers() {
     return [
