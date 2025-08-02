@@ -40,7 +40,7 @@ async function verifyTurnstileToken(token: string, ip: string): Promise<boolean>
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        secret: process.env.TURNSTILE_SECRET_KEY || '0x4AAAAAAAkKKK8_VIIIvvvv_dummy', // Replace with your secret key
+        secret: process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA',
         response: token,
         remoteip: ip,
       }),

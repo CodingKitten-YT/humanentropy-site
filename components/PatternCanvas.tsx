@@ -83,7 +83,7 @@ export default function PatternCanvas() {
     if (coordinates.length >= 80 && !captchaToken && window.turnstile) {
       setTimeout(() => {
         const widgetId = window.turnstile.render('#turnstile-widget', {
-          sitekey: '0x4AAAAAAAkKKK8_VIIIvvvv', // Replace with your actual site key
+          sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA',
           callback: (token: string) => {
             setCaptchaToken(token)
           },
