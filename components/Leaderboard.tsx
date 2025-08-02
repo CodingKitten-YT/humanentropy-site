@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Trophy, Users, Database, TrendingUp } from 'lucide-react'
 
 interface LeaderboardEntry {
-  username: string
+  id: number
   contribution_count: number
 }
 
@@ -210,7 +210,7 @@ export default function Leaderboard() {
             <div className="space-y-3">
               {data?.leaderboard.map((entry, index) => (
                 <div
-                  key={entry.username}
+                  key={entry.id}
                   className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-100 dark:border-gray-800 transition-colors hover:bg-gray-100 dark:hover:bg-gray-900"
                 >
                   <div className="flex items-center gap-4">
@@ -224,10 +224,10 @@ export default function Leaderboard() {
                       {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">{entry.username}</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">Anonymous Contributor #{entry.id}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
                         <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                        GitHub User
+                        Verified Human
                       </p>
                     </div>
                   </div>

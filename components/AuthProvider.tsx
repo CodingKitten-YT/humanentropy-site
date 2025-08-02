@@ -1,21 +1,8 @@
-'use client'
-
-import { SessionProvider } from "next-auth/react"
-
+// AuthProvider removed - no authentication needed
 export default function AuthProvider({ 
-  children,
-  session
+  children 
 }: {
   children: React.ReactNode
-  session: any
 }) {
-  return (
-    <SessionProvider 
-      session={session}
-      refetchInterval={5 * 60} // Refresh session every 5 minutes
-      refetchOnWindowFocus={true}
-    >
-      {children}
-    </SessionProvider>
-  )
+  return <>{children}</>
 }

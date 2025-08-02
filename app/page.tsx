@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { ArrowRight, Github, Brain, Search, Users, Shield, BarChart3, Zap } from 'lucide-react'
+import { ArrowRight, Brain, Search, Users, Shield, BarChart3, Zap } from 'lucide-react'
 
 // Generate random pattern
 const generateRandomPattern = () => {
@@ -29,7 +28,6 @@ const generateRandomPattern = () => {
 
 export default function HomePage() {
   const [currentPattern, setCurrentPattern] = useState<number[]>([])
-  const { data: session, status } = useSession()
   const router = useRouter()
 
   useEffect(() => {
@@ -44,14 +42,9 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [])
 
-  // Auto-redirect handled by NextAuth configuration on first login
 
   const handleContribute = () => {
-    if (session) {
-      router.push('/app')
-    } else {
-      router.push('/login')
-    }
+    router.push('/app')
   }
 
   const scrollToAbout = () => {
@@ -118,37 +111,15 @@ export default function HomePage() {
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              {session ? (
-                <Button 
-                  size="sm" 
-                  className="flex items-center space-x-2"
-                  onClick={() => router.push('/app')}
-                >
-                  <Brain className="w-4 h-4" />
-                  <span>Create Pattern</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button 
-                  size="sm" 
-                  className="flex items-center space-x-2"
-                  onClick={handleContribute}
-                  disabled={status === 'loading'}
-                >
-                  {status === 'loading' ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Loading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Github className="w-4 h-4" />
-                      <span>Contribute Now</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </Button>
-              )}
+              <Button 
+                size="sm" 
+                className="flex items-center space-x-2"
+                onClick={handleContribute}
+              >
+                <Brain className="w-4 h-4" />
+                <span>Create Pattern</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
@@ -181,20 +152,10 @@ export default function HomePage() {
                 size="lg" 
                 className="flex items-center space-x-2 text-lg px-8 py-3"
                 onClick={handleContribute}
-                disabled={status === 'loading'}
               >
-                {status === 'loading' ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  <>
-                    <Github className="w-5 h-5" />
-                    <span>Contribute Now</span>
-                    <ArrowRight className="w-5 h-5" />
-                  </>
-                )}
+                <Brain className="w-5 h-5" />
+                <span>Contribute Now</span>
+                <ArrowRight className="w-5 h-5" />
               </Button>
               <Button 
                 variant="outline" 
@@ -326,20 +287,10 @@ export default function HomePage() {
               size="lg" 
               className="text-xl px-12 py-4"
               onClick={handleContribute}
-              disabled={status === 'loading'}
             >
-              {status === 'loading' ? (
-                <>
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  <Github className="w-6 h-6 mr-3" />
-                  Let's Go
-                  <ArrowRight className="w-6 h-6 ml-3" />
-                </>
-              )}
+              <Brain className="w-6 h-6 mr-3" />
+              Let's Go
+              <ArrowRight className="w-6 h-6 ml-3" />
             </Button>
           </div>
         </section>

@@ -1,5 +1,4 @@
-export { default } from "next-auth/middleware"
-
+// Middleware removed - no authentication required
 export const config = {
-  matcher: ["/api/submit-pattern"]
+  matcher: []
 }

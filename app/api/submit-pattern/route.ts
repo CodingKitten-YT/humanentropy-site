@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
 import { 
   initializeDatabase, 
   submitPattern, 
-  updateContributionCount, 
   closeDatabase 
 } from '@/lib/database'
 
@@ -14,15 +11,15 @@ export const dynamic = 'force-dynamic'
 // Simple in-memory rate limiting (in production, use Redis or similar)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
 const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 5 // Max 5 submissions per minute per user
+const RATE_LIMIT_MAX_REQUESTS = 2 // Max 2 submissions per minute per IP
 
-function checkRateLimit(userId: string): boolean {
+function checkRateLimit(ip: string): boolean {
   const now = Date.now()
-  const userLimit = rateLimitMap.get(userId)
+  const userLimit = rateLimitMap.get(ip)
   
   if (!userLimit || now > userLimit.resetTime) {
     // Reset or create new limit
-    rateLimitMap.set(userId, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
     return true
   }
   
@@ -34,16 +31,38 @@ function checkRateLimit(userId: string): boolean {
   return true
 }
 
+// Verify Cloudflare Turnstile token
+async function verifyTurnstileToken(token: string, ip: string): Promise<boolean> {
+  try {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        secret: process.env.TURNSTILE_SECRET_KEY || '0x4AAAAAAAkKKK8_VIIIvvvv_dummy', // Replace with your secret key
+        response: token,
+        remoteip: ip,
+      }),
+    })
+
+    const result = await response.json()
+    return result.success === true
+  } catch (error) {
+    console.error('Turnstile verification error:', error)
+    return false
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Get session to verify user is authenticated
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.name) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-    }
+    // Get client IP for rate limiting
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               '127.0.0.1'
 
     // Rate limiting
-    if (!checkRateLimit(session.user.name)) {
+    if (!checkRateLimit(ip)) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please wait before submitting again.' },
         { status: 429 }
@@ -60,8 +79,24 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { coordinates, optedInForCredit = true } = body
+    const { coordinates, captchaToken } = body
 
+    // Validate captcha token
+    if (!captchaToken || typeof captchaToken !== 'string') {
+      return NextResponse.json(
+        { error: 'Captcha verification required' },
+        { status: 400 }
+      )
+    }
+
+    // Verify Turnstile token
+    const isValidCaptcha = await verifyTurnstileToken(captchaToken, ip)
+    if (!isValidCaptcha) {
+      return NextResponse.json(
+        { error: 'Captcha verification failed. Please try again.' },
+        { status: 400 }
+      )
+    }
     // Validate coordinates array
     if (!Array.isArray(coordinates)) {
       return NextResponse.json(
@@ -106,25 +141,12 @@ export async function POST(request: NextRequest) {
       uniqueCoords.add(coordKey)
     }
 
-    // Validate opted in flag
-    if (typeof optedInForCredit !== 'boolean') {
-      return NextResponse.json(
-        { error: 'Invalid optedInForCredit value. Must be boolean.' },
-        { status: 400 }
-      )
-    }
-
     // Initialize database
     const db = await initializeDatabase()
 
     try {
       // Submit pattern anonymously with comprehensive features
-      await submitPattern(db, coordinates, optedInForCredit)
-
-      // Update contribution count separately (only if opted in for credit)
-      if (optedInForCredit) {
-        await updateContributionCount(db, session.user.name, false)
-      }
+      await submitPattern(db, coordinates, true)
 
       return NextResponse.json({ 
         success: true, 

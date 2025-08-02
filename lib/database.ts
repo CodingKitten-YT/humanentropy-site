@@ -274,54 +274,24 @@ export function submitPattern(
   })
 }
 
-// Update contribution count (separate from submissions)
-export function updateContributionCount(
-  db: sqlite3.Database,
-  username: string,
-  optedOut: boolean = false
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Insert or update contribution count
-      const stmt = db.prepare(`
-        INSERT INTO contribution_ledger (username, contribution_count, opted_out)
-        VALUES (?, 1, ?)
-        ON CONFLICT(username) DO UPDATE SET
-          contribution_count = contribution_count + 1,
-          opted_out = ?,
-          updated_at = CURRENT_TIMESTAMP
-      `)
-      
-      stmt.run(username, optedOut ? 1 : 0, optedOut ? 1 : 0, (err: Error | null) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
-      
-      stmt.finalize()
-    })
-  })
-}
-
 // Get leaderboard (only users who haven't opted out)
 export function getLeaderboard(db: sqlite3.Database, limit: number = 10): Promise<Array<{
-  username: string;
+  id: number;
   contribution_count: number;
 }>> {
   return new Promise((resolve, reject) => {
     db.all(`
-      SELECT username, contribution_count
-      FROM contribution_ledger
-      WHERE opted_out = false AND contribution_count > 0
-      ORDER BY contribution_count DESC, updated_at ASC
+      SELECT ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) as id, COUNT(*) as contribution_count
+      FROM submissions
+      WHERE opted_in_for_credit = true
+      GROUP BY timestamp_bucket
+      ORDER BY contribution_count DESC
       LIMIT ?
     `, [limit], (err, rows) => {
       if (err) {
         reject(err)
       } else {
-        resolve(rows as Array<{ username: string; contribution_count: number }>)
+        resolve(rows as Array<{ id: number; contribution_count: number }>)
       }
     })
   })
@@ -345,7 +315,7 @@ export function getTotalStats(db: sqlite3.Database): Promise<{
         
         const total_submissions = row.total_submissions
         
-        db.get(`SELECT COUNT(*) as total_contributors FROM contribution_ledger WHERE contribution_count > 0`, (err, row: any) => {
+        db.get(`SELECT COUNT(DISTINCT timestamp_bucket) as total_contributors FROM submissions WHERE opted_in_for_credit = true`, (err, row: any) => {
           if (err) {
             reject(err)
             return
